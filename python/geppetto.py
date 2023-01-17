@@ -2,6 +2,9 @@
 import openai
 import argparse
 from colorama import Fore, Back, Style
+import os
+
+KEY_FILE='../openaikey'
 
 def parse_args() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -15,7 +18,10 @@ def parse_args() -> argparse.ArgumentParser:
 def main():
     args = parse_args()
     # print(args.ask)
-    openai.api_key_path = 'openaikey'
+    if not os.path.exists(KEY_FILE):
+        print("OpenAI API Key not found!")
+        return
+    openai.api_key_path = KEY_FILE
     ask = args.ask
     while True:
         if ask == None:
@@ -25,9 +31,10 @@ def main():
         response = openai.Completion.create(
                        engine="text-davinci-002",
                        prompt=ask,
-                       temperature=0.5
+                       temperature=0.5,
+                       max_tokens=500
                    )
-        print(response)
+        #print(response)
         print(Fore.GREEN + response["choices"][0]["text"])
         if args.ask is not None:
             break
